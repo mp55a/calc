@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماشین حساب صوتی فارسی</title>
+    <style>
+        body {
+            font-family: 'Tahoma', sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            padding: 20px;
+        }
+        button {
+            font-size: 20px;
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+        }
+        #numbers {
+            margin-top: 20px;
+            background-color: #ffe5e5;
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>ماشین حساب صوتی فارسی</h2>
+    <p>برای وارد کردن عدد، دکمه زیر را بزنید و عدد خود را بگویید:</p>
+
+    <button onclick="startListening()">شروع شنیدن</button>
+
+    <div id="numbers"></div>
+
+    <button onclick="calculateSum()">جمع کن</button>
+
+    <p id="result"></p>
+
+    <script>
+        let numbers = [];
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = "fa-IR";  // تنظیم زبان فارسی
+
+        recognition.onstart = function() {
+            document.getElementById("numbers").innerText = "در حال شنیدن...";
+        };
+
+        recognition.onresult = function(event) {
+            let spokenText = event.results[0][0].transcript;
+            let number = parseInt(spokenText.replace(/[^\d]/g, '')); // حذف کاراکترهای غیر عددی
+
+            if (!isNaN(number)) {
+                numbers.push(number);
+                displayNumbers();
+                speak("عدد وارد شد");
+            } else {
+                speak("لطفاً یک عدد معتبر بگویید");
+            }
+        };
+
+        recognition.onerror = function() {
+            speak("خطا در شناسایی صدا");
+        };
+
+        function startListening() {
+            recognition.start();
+        }
+
+        function displayNumbers() {
+            document.getElementById("numbers").innerText = "اعداد وارد شده: " + numbers.join(", ");
+        }
+
+        function calculateSum() {
+            let sum = numbers.reduce((acc, num) => acc + num, 0);
+            document.getElementById("result").innerText = "جمع اعداد: " + sum;
+            speak("جمع اعداد محاسبه شد. نتیجه: " + sum);
+        }
+
+        function speak(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "fa-IR";  // زبان فارسی
+            window.speechSynthesis.speak(speech);
+        }
+    </script>
+
+</body>
+</html>
