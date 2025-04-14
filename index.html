@@ -13,10 +13,12 @@
   <script>
     const recognition = new webkitSpeechRecognition(); 
     recognition.lang = "fa-IR";  // تغییر به زبان فارسی
+    recognition.interimResults = true; // تنظیم برای دریافت نتایج میانه
 
     let numbers = [];
 
     function startListening() {
+      console.log("شروع ضبط صدا...");
       recognition.start();
     }
 
@@ -61,6 +63,10 @@
           console.log("❌ عدد شناسایی نشد");
         }
       }
+    };
+
+    recognition.onerror = function(event) {
+      console.log("خطا در شناسایی صدا:", event.error);
     };
 
     // تبدیل کلمات فارسی به اعداد
